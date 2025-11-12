@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # WhatsApp Web Integration Application
+  whatsapp-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whatsapp-web-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Supabase Configuration
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+
+      # Encryption
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+
+      # Application
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - NODE_ENV=${NODE_ENV:-production}
+
+      # Session Storage
+      - SESSION_DATA_PATH=/app/session-data
+
+      # Rate Limiting
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+
+      # Supabase Storage
+      - SUPABASE_MEDIA_BUCKET=${SUPABASE_MEDIA_BUCKET:-whatsapp-media}
+
+    volumes:
+      # Persist WhatsApp session data
+      - whatsapp-sessions:/app/session-data
+      # Optional: mount logs
+      - ./logs:/app/logs
+
+    networks:
+      - whatsapp-network
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  whatsapp-sessions:
+    driver: local
+
+networks:
+  whatsapp-network:
+    driver: bridge
+
+# Notes:
+# 1. Copy .env.example to .env and fill in your Supabase credentials
+# 2. Run: docker-compose up -d
+# 3. Access at http://localhost:3000
+# 4. To view logs: docker-compose logs -f
+# 5. To stop: docker-compose down
+# 6. To rebuild: docker-compose up -d --build

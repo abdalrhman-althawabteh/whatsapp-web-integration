@@ -1,0 +1,55 @@
+{
+  "name": "whatsapp-web-integration",
+  "version": "1.0.0",
+  "description": "WhatsApp Web Integration with Supabase - MVP for connecting personal WhatsApp to web dashboard",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:supabase": "node scripts/test-supabase.js",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "dependencies": {
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "whatsapp-web.js": "^1.23.0",
+    "qrcode": "^1.5.3",
+    "express-rate-limit": "^7.1.5",
+    "crypto-js": "^4.2.0",
+    "date-fns": "^3.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "@types/react": "^18.2.46",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "jest": "^29.7.0",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/jest-dom": "^6.1.5",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "whatsapp",
+    "whatsapp-web",
+    "supabase",
+    "nextjs",
+    "chat",
+    "integration"
+  ],
+  "author": "",
+  "license": "MIT"
+}

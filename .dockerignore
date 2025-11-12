@@ -1,0 +1,53 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Next.js
+.next
+out
+build
+
+# Environment variables
+.env
+.env*.local
+
+# WhatsApp session data
+.wwebjs_auth
+.wwebjs_cache
+sessions
+session-data
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+coverage
+.nyc_output
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Documentation (optional, uncomment if you want to exclude)
+# README.md
+# docs
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp
+temp
