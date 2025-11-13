@@ -1,0 +1,45 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": {
+      "description": "Your Supabase project URL (from Supabase Dashboard > Settings > API)",
+      "required": true
+    },
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
+      "description": "Your Supabase anon/public key (from Supabase Dashboard > Settings > API)",
+      "required": true
+    },
+    "SUPABASE_SERVICE_ROLE_KEY": {
+      "description": "Your Supabase service_role key (from Supabase Dashboard > Settings > API)",
+      "required": true
+    },
+    "ENCRYPTION_KEY": {
+      "description": "A random 32-character string for encrypting session data. Generate with: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
+      "required": true
+    },
+    "SESSION_DATA_PATH": {
+      "description": "Path for WhatsApp session data storage",
+      "value": "/tmp/session-data",
+      "required": false
+    },
+    "RATE_LIMIT_WINDOW_MS": {
+      "description": "Rate limit window in milliseconds",
+      "value": "900000",
+      "required": false
+    },
+    "RATE_LIMIT_MAX_REQUESTS": {
+      "description": "Maximum requests per window",
+      "value": "100",
+      "required": false
+    },
+    "SUPABASE_MEDIA_BUCKET": {
+      "description": "Supabase storage bucket name for media",
+      "value": "whatsapp-media",
+      "required": false
+    }
+  }
+}

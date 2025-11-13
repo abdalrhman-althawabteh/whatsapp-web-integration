@@ -152,10 +152,33 @@ docker-compose down
 docker-compose up -d --build
 ```
 
+### ☁️ Cloud Deployment
+
+#### Vercel (Frontend + API)
+
+⚠️ **Note**: Vercel has limitations for WhatsApp sessions (serverless, no persistent storage). Better for testing/demo.
+
+See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for complete guide.
+
+Quick steps:
+1. Push code to GitHub
+2. Import project on [vercel.com](https://vercel.com)
+3. Add environment variables (Supabase credentials, encryption key)
+4. Deploy
+
+#### Recommended for Production:
+
+- **Railway** - Best for persistent WhatsApp sessions
+- **DigitalOcean App Platform** - Good for stateful apps
+- **AWS ECS/EC2** - Full control
+- **Self-hosted VPS** - Most reliable for WhatsApp
+
 ### 📚 Documentation
 
-- [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) - Detailed Supabase configuration
 - [QUICK_START.md](./QUICK_START.md) - Step-by-step setup guide
+- [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) - Detailed Supabase configuration
+- [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) - Deploy to Vercel
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
 
 ### 🔒 Security Considerations
 

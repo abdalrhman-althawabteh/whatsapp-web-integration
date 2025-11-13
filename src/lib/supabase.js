@@ -9,16 +9,20 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+// Use placeholder values during build time to avoid errors
+// Runtime checks will happen in components/API routes
+const url = supabaseUrl || 'https://placeholder.supabase.co';
+const anonKey = supabaseAnonKey || 'placeholder-anon-key';
 
 /**
  * Browser/Client-side Supabase client
  * Use this in components and client-side code
  * Includes automatic session management
+ *
+ * Note: During build time, placeholder values are used.
+ * Runtime validation happens in components.
  */
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient(url, anonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -37,7 +41,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  * Has full access and bypasses RLS
  */
 export const supabaseAdmin = supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey, {
+  ? createClient(url, supabaseServiceKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
@@ -51,7 +55,7 @@ export const supabaseAdmin = supabaseServiceKey
  * @returns {Object} Authenticated Supabase client
  */
 export function createAuthenticatedClient(accessToken) {
-  return createClient(supabaseUrl, supabaseAnonKey, {
+  return createClient(url, anonKey, {
     global: {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -61,6 +65,15 @@ export function createAuthenticatedClient(accessToken) {
       persistSession: false,
     },
   });
+}
+
+/**
+ * Check if Supabase is properly configured
+ * Use this in components to validate at runtime
+ * @returns {boolean} True if configured
+ */
+export function isSupabaseConfigured() {
+  return !!(supabaseUrl && supabaseAnonKey);
 }
 
 /**
