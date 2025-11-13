@@ -38,6 +38,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Session name is required' });
     }
 
+    // Check if supabaseAdmin is available
+    if (!supabaseAdmin) {
+      console.error('Supabase admin client not initialized - missing SUPABASE_SERVICE_ROLE_KEY');
+      return res.status(500).json({
+        error: 'Server configuration error',
+        details: 'Supabase admin client not configured. Please add SUPABASE_SERVICE_ROLE_KEY environment variable.'
+      });
+    }
+
     // Create session in database
     const { data: session, error: dbError } = await supabaseAdmin
       .from('sessions')
@@ -51,10 +60,33 @@ export default async function handler(req, res) {
 
     if (dbError) {
       console.error('Database error:', dbError);
-      return res.status(500).json({ error: 'Failed to create session' });
+      return res.status(500).json({
+        error: 'Failed to create session',
+        details: dbError.message
+      });
     }
 
-    // Start WhatsApp session
+    // Check if we're on Vercel (serverless environment)
+    const isVercel = process.env.VERCEL === '1';
+
+    if (isVercel) {
+      // On Vercel, we can't run Puppeteer/WhatsApp connector
+      // Just create the session record and show a warning
+      console.warn('Running on Vercel - WhatsApp connector not available in serverless environment');
+
+      return res.status(200).json({
+        success: true,
+        session: {
+          id: session.id,
+          name: session.name,
+          status: 'pending',
+          message: 'Session created, but WhatsApp connector is not available on Vercel.',
+        },
+        warning: 'WhatsApp Web requires a persistent server environment. Vercel serverless functions cannot maintain WhatsApp sessions. Please deploy to Railway, DigitalOcean, or use Docker for full functionality.'
+      });
+    }
+
+    // Start WhatsApp session (only on non-serverless environments)
     try {
       await whatsappConnector.startSession(session.id, user.id);
 
@@ -71,15 +103,16 @@ export default async function handler(req, res) {
     } catch (whatsappError) {
       console.error('WhatsApp connector error:', whatsappError);
 
-      // Delete session from database if WhatsApp initialization fails
+      // Update session status to failed instead of deleting
       await supabaseAdmin
         .from('sessions')
-        .delete()
+        .update({ status: 'failed' })
         .eq('id', session.id);
 
       return res.status(500).json({
         error: 'Failed to initialize WhatsApp session',
         details: whatsappError.message,
+        hint: 'This may happen on serverless platforms. Consider deploying to Railway or using Docker.'
       });
     }
 

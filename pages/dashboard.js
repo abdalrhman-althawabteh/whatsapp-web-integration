@@ -77,15 +77,29 @@ function Dashboard() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to create session');
+        // Show detailed error message
+        const errorMsg = result.details
+          ? `${result.error}\n\nDetails: ${result.details}`
+          : result.error || 'Failed to create session';
+        throw new Error(errorMsg);
+      }
+
+      // Show warning if WhatsApp connector is not available
+      if (result.warning) {
+        alert(`⚠️ Warning:\n\n${result.warning}\n\nSession created but WhatsApp features will not work on Vercel.`);
       }
 
       setShowCreateModal(false);
       setNewSessionName('');
+
+      // Refresh sessions list
+      await fetchSessions();
+
+      // Navigate to chat page
       router.push(`/chat/${result.session.id}`);
 
     } catch (error) {
-      alert(error.message);
+      alert(`❌ Error creating session:\n\n${error.message}`);
     } finally {
       setCreating(false);
     }
@@ -116,6 +130,42 @@ function Dashboard() {
           </div>
         </div>
       </header>
+
+      {/* Vercel Warning Banner */}
+      {process.env.NEXT_PUBLIC_VERCEL_ENV && (
+        <div className="bg-yellow-50 border-b border-yellow-200">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">⚠️</span>
+              <div className="flex-1">
+                <h3 className="font-semibold text-yellow-900 mb-1">
+                  WhatsApp Connector Not Available on Vercel
+                </h3>
+                <p className="text-sm text-yellow-800">
+                  You're running on Vercel's serverless platform. WhatsApp Web requires a persistent server environment
+                  to maintain sessions and WebSocket connections. For full functionality, please deploy to:
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <a
+                    href="https://railway.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs bg-yellow-200 hover:bg-yellow-300 text-yellow-900 px-3 py-1 rounded transition-colors"
+                  >
+                    Railway (Recommended)
+                  </a>
+                  <span className="text-xs bg-yellow-200 text-yellow-900 px-3 py-1 rounded">
+                    DigitalOcean
+                  </span>
+                  <span className="text-xs bg-yellow-200 text-yellow-900 px-3 py-1 rounded">
+                    Docker on VPS
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
